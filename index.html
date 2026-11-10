@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bé Hỏi Vì Sao</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+:root {
+  --bg: #EAF4FB; --card: #FFFFFF; --ink: #17283D; --muted: #5B6F86; --line: #CFE0EE;
+  --sun: #FFB400; --sun-ink: #3A2A00; --leaf: #2E9E68; --coral: #F2604F; --sky: #2F7FD1;
+  --font-display: "Baloo 2", "Nunito", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0F1B28; --card: #182B3F; --ink: #EAF2F8; --muted: #9BB1C7; --line: #2A425A; --sun: #FFC233; --sun-ink: #2E2100; --leaf: #4CC088; --coral: #FF7D6C; --sky: #6AAEF2; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.5; padding: 20px 16px 48px; }
+.wrap { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1, h2 { font-family: var(--font-display); line-height: 1.1; margin: 0; text-wrap: balance; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.sunmark { width: 44px; height: 44px; border-radius: 50%; background: var(--sun); flex: none; position: relative; box-shadow: 0 0 0 6px color-mix(in srgb, var(--sun) 30%, transparent); }
+.sunmark::after { content: ""; position: absolute; left: 11px; top: 13px; width: 6px; height: 6px; border-radius: 50%; background: var(--sun-ink); box-shadow: 16px 0 0 var(--sun-ink); }
+.brand h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); font-weight: 800; }
+.brand p { margin: 0; color: var(--muted); font-size: .95rem; }
+.card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; padding: 18px; }
+.ask { display: flex; flex-direction: column; gap: 14px; }
+.ask label { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row input { flex: 1 1 240px; min-width: 0; font: inherit; font-size: 1.15rem; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); }
+.btn { border: 0; border-radius: 16px; padding: 14px 22px; font-weight: 800; }
+.btn-go { background: var(--sun); color: var(--sun-ink); font-family: var(--font-display); font-size: 1.2rem; }
+.btn-go:disabled { opacity: .6; cursor: progress; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip { background: var(--bg); border: 2px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: .95rem; font-weight: 600; }
+.chip:hover { border-color: var(--sky); }
+.status { min-height: 1.4em; margin: 0; color: var(--muted); font-size: .95rem; }
+.status.err { color: var(--coral); }
+
+details.settings { padding: 0; }
+details.settings summary { padding: 14px 18px; font-weight: 800; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+details.settings summary::-webkit-details-marker { display: none; }
+details.settings summary .st { font-weight: 700; color: var(--muted); }
+details.settings summary .st.ok { color: var(--leaf); }
+.sbody { padding: 0 18px 18px; display: grid; gap: 12px; }
+.sbody label { display: grid; gap: 4px; font-weight: 700; font-size: .95rem; }
+.sbody input { font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+.sbody .warn { margin: 0; font-size: .9rem; color: var(--muted); }
+.sbody .acts { display: flex; gap: 10px; flex-wrap: wrap; }
+.sbody .btn { padding: 10px 18px; }
+.btn-save { background: var(--leaf); color: #fff; }
+.btn-clear { background: var(--bg); border: 2px solid var(--line) !important; }
+.sbody a { color: var(--sky); }
+
+.lesson-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.lesson-head h2 { font-size: clamp(1.4rem, 4.5vw, 1.9rem); font-weight: 800; }
+.tag { font-size: .85rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--leaf); }
+
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 18px; overflow: hidden; border: 2px solid var(--line); background: var(--bg); }
+.stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; animation: fadein .7s ease both, var(--kb) var(--dur, 8s) ease-in-out both; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zoom-in { from { transform: scale(1); } to { transform: scale(1.14); } }
+@keyframes zoom-out { from { transform: scale(1.14); } to { transform: scale(1); } }
+@keyframes pan-left { from { transform: scale(1.14) translateX(3.5%); } to { transform: scale(1.14) translateX(-3.5%); } }
+@keyframes pan-right { from { transform: scale(1.14) translateX(-3.5%); } to { transform: scale(1.14) translateX(3.5%); } }
+.ph { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; padding: 16px; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; color: var(--muted); background: linear-gradient(100deg, var(--bg) 30%, color-mix(in srgb, var(--line) 60%, var(--bg)) 50%, var(--bg) 70%); background-size: 200% 100%; animation: shimmer 1.6s linear infinite; }
+.ph.fail { animation: none; background: var(--bg); }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.ph button { background: var(--sun); color: var(--sun-ink); border: 0; border-radius: 12px; padding: 8px 16px; font-weight: 800; }
+
+.caption { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 5vw, 2rem); margin: 14px 0 4px; line-height: 1.15; text-wrap: balance; }
+.narration { font-size: clamp(1.1rem, 3.4vw, 1.35rem); margin: 0; min-height: 3.2em; max-width: 62ch; }
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.ctl { background: var(--bg); border: 2px solid var(--line); border-radius: 14px; padding: 10px 16px; font-weight: 800; }
+.ctl:disabled { opacity: .45; cursor: default; }
+.ctl.play { background: var(--leaf); border-color: var(--leaf); color: #fff; font-family: var(--font-display); font-size: 1.15rem; padding-inline: 22px; }
+.dots { display: flex; gap: 8px; margin-left: auto; }
+.dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); background: transparent; padding: 0; }
+.dot[aria-current="true"] { background: var(--sun); border-color: var(--sun); }
+.dot.done { background: var(--line); }
+.dot.ready { border-color: var(--leaf); }
+.quiz h2 { font-size: 1.4rem; margin-bottom: 12px; }
+.quiz .q { font-weight: 800; font-size: 1.2rem; margin: 0 0 12px; }
+.opts { display: grid; gap: 10px; }
+.opt { text-align: left; background: var(--bg); border: 2px solid var(--line); border-radius: 14px; padding: 12px 16px; font-weight: 700; }
+.opt.right { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+.opt.wrong { background: var(--coral); border-color: var(--coral); color: #fff; }
+.explain { margin: 12px 0 0; font-weight: 600; }
+.loading { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.note { color: var(--muted); font-size: .9rem; margin: 0; }
+@media (prefers-reduced-motion: reduce) { .stage img { animation: fadein .3s both; } .ph { animation: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <div class="sunmark" aria-hidden="true"></div>
+    <div><h1>Bé Hỏi Vì Sao</h1><p>Bé hỏi một câu, cô vẽ tranh và kể thành một đoạn phim nhỏ.</p></div>
+  </header>
+
+  <details class="card settings" id="settings">
+    <summary><span>Cài đặt Gemini</span><span class="st" id="keystate">Chưa có khóa</span></summary>
+    <div class="sbody">
+      <label for="key">Khóa Gemini API
+        <input id="key" type="password" autocomplete="off" placeholder="Dán khóa lấy từ aistudio.google.com/apikey">
+      </label>
+      <label for="tmodel">Mô hình viết kịch bản
+        <input id="tmodel" type="text" autocomplete="off">
+      </label>
+      <label for="imodel">Mô hình vẽ tranh
+        <input id="imodel" type="text" autocomplete="off">
+      </label>
+      <p class="warn">Khóa chỉ được lưu trong trình duyệt của thiết bị này và gửi thẳng tới Google. Đừng ghi khóa vào file index.html hay đưa lên GitHub. Nên tạo khóa riêng cho app này và đặt hạn mức chi tiêu trong Google AI Studio. Đây là trang tĩnh nên không có server giữ khóa: ai biết khóa của bạn đều dùng được. Lấy khóa tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.</p>
+      <div class="acts">
+        <button type="button" class="btn btn-save" id="save">Lưu</button>
+        <button type="button" class="btn btn-clear" id="clear">Xóa khóa</button>
+      </div>
+    </div>
+  </details>
+
+  <section class="card ask" aria-label="Đặt câu hỏi">
+    <label for="q">Con muốn biết điều gì?</label>
+    <form class="row" id="form">
+      <input id="q" type="text" autocomplete="off" placeholder="Ví dụ: Vì sao có cầu vồng?" maxlength="140">
+      <button type="submit" class="btn btn-go" id="go">Hỏi cô</button>
+    </form>
+    <div class="chips" id="chips"></div>
+    <p class="status" id="status" role="status"></p>
+  </section>
+
+  <section class="card" id="lesson" aria-live="polite" hidden></section>
+  <section class="card quiz" id="quiz" hidden></section>
+  <p class="note" id="voicenote"></p>
+</div>
+
+<script>
+(function () {
+  var BASE = 'https://generativelanguage.googleapis.com/v1beta';
+  var DEF = { key: '', tmodel: 'gemini-3-flash-preview', imodel: 'gemini-3.1-flash-image' };
+  var MOTIONS = ['zoom-in', 'zoom-out', 'pan-left', 'pan-right'];
+  var SUGGEST = ['Vì sao có cầu vồng?', 'Vì sao ban đêm có trăng?', 'Chú cảnh sát giúp gì cho mọi người?', 'Tiền từ đâu mà có?', 'Vì sao cây cần nước?'];
+  var STYLE_BASE = "Cheerful children's picture book illustration for ages 6 to 8, soft watercolor and gouache, bright friendly colors, simple rounded shapes, one clear focal subject, warm light.";
+  var SYSTEM = [
+    'Bạn là cô giáo vui tính, dạy bé 6-8 tuổi về thiên nhiên và xã hội.',
+    'Khi bé hỏi, hãy viết kịch bản hoạt hình 5 đến 6 cảnh để giải thích thật dễ hiểu và đúng khoa học.',
+    '- Lời kể mỗi cảnh: 1-2 câu ngắn (tối đa 25 từ), từ ngữ quen thuộc với trẻ, ví dụ gần gũi, giọng ấm áp. Cảnh cuối tóm tắt bài.',
+    '- Nếu câu hỏi không phù hợp với trẻ em hoặc không thuộc chủ đề thiên nhiên/xã hội, chỉ trả về {"refuse":"lời nhẹ nhàng gợi ý bé hỏi chủ đề khác"}.',
+    '- style_guide: mô tả bằng TIẾNG ANH các nhân vật và hình dáng cố định (ví dụ: "a small round cloud character with a smiling face and rosy cheeks; a girl with a yellow raincoat"), để mọi tranh giống nhau.',
+    '- image_prompt: mô tả bằng TIẾNG ANH một cảnh tĩnh, cụ thể, không có chữ trong tranh.',
+    '- motion: một trong zoom-in, zoom-out, pan-left, pan-right, chọn cho hợp cảnh.',
+    'Chỉ trả về JSON:',
+    '{"title":"...","topic":"thiên nhiên"|"xã hội","style_guide":"...","scenes":[{"caption":"tối đa 7 từ","narration":"...","motion":"...","image_prompt":"..."}],"quiz":{"q":"...","options":["...","...","..."],"answer":0,"explain":"..."}}'
+  ].join('\n');
+
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { lesson: null, idx: 0, playing: false, token: 0, voice: null, timers: [], run: 0, cfg: Object.assign({}, DEF), imgCache: {} };
+
+  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
+  function setStatus(t, err) { var s = $('status'); s.textContent = t || ''; s.className = 'status' + (err ? ' err' : ''); }
+  function dur(sc) { return Math.max(6, Math.round(sc.narration.length * 0.09)); }
+  function str(v, n) { return String(v == null ? '' : v).trim().slice(0, n); }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+  /* ---- cài đặt (lưu trong trình duyệt) ---- */
+  function loadCfg() {
+    try { var s = JSON.parse(localStorage.getItem('behoi.cfg') || '{}'); state.cfg = Object.assign({}, DEF, s); } catch (e) {}
+    $('key').value = state.cfg.key; $('tmodel').value = state.cfg.tmodel; $('imodel').value = state.cfg.imodel;
+    showKeyState();
+  }
+  function saveCfg() {
+    state.cfg = { key: $('key').value.trim(), tmodel: $('tmodel').value.trim() || DEF.tmodel, imodel: $('imodel').value.trim() || DEF.imodel };
+    try { localStorage.setItem('behoi.cfg', JSON.stringify(state.cfg)); } catch (e) { setStatus('Trình duyệt không cho lưu cài đặt, khóa chỉ dùng trong lần mở trang này.'); }
+    showKeyState();
+  }
+  function showKeyState() {
+    var s = $('keystate'), ok = !!state.cfg.key;
+    s.textContent = ok ? 'Đã có khóa' : 'Chưa có khóa'; s.className = 'st' + (ok ? ' ok' : '');
+    if (!ok) $('settings').open = true;
+  }
+  $('save').onclick = function () { saveCfg(); if (state.cfg.key) { $('settings').open = false; setStatus('Đã lưu. Con hỏi cô nhé!'); } };
+  $('clear').onclick = function () {
+    $('key').value = ''; saveCfg(); setStatus('Đã xóa khóa khỏi trình duyệt này.');
+  };
+
+  /* ---- gọi Gemini trực tiếp từ trình duyệt ---- */
+  async function gemini(model, body) {
+    if (!state.cfg.key) throw Object.assign(new Error('Con cần nhập khóa Gemini API trong phần Cài đặt trước nhé.'), { code: 'nokey' });
+    var last;
+    for (var a = 0; a < 3; a++) {
+      var res;
+      try {
+        res = await fetch(BASE + '/models/' + encodeURIComponent(model) + ':generateContent', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': state.cfg.key }, body: JSON.stringify(body)
+        });
+      } catch (e) { throw Object.assign(new Error('Không kết nối được tới Google. Kiểm tra mạng rồi thử lại nhé.'), { code: 'net' }); }
+      if (res.ok) return res.json();
+      var text = await res.text();
+      last = Object.assign(new Error(friendly(res.status, text)), { status: res.status, badkey: /API key|API_KEY/i.test(text) });
+      if (res.status !== 429 && res.status < 500) break;
+      await sleep(800 * Math.pow(a + 1, 2));
+    }
+    throw last;
+  }
+  function friendly(status, text) {
+    if (/API key|API_KEY/i.test(text)) return 'Khóa API chưa đúng hoặc đã hết hạn. Kiểm tra lại trong Cài đặt.';
+    if (status === 403) return 'Khóa này không được phép dùng mô hình đó (hoặc đã bị chặn).';
+    if (status === 404) return 'Không tìm thấy mô hình. Đổi tên mô hình trong Cài đặt theo danh sách mới của Google.';
+    if (status === 429) return 'Gemini đang bận hoặc hết hạn mức. Đợi ít phút rồi thử lại nhé.';
+    var m = text.match(/"message"\s*:\s*"([^"]{1,200})/);
+    return 'Gemini báo lỗi ' + status + (m ? ': ' + m[1] : '.');
+  }
+  function partsOf(j) { return (j && j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []; }
+
+  function cleanLesson(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    if (raw.refuse) return { refuse: str(raw.refuse, 300) };
+    if (!Array.isArray(raw.scenes)) return null;
+    var scenes = raw.scenes.slice(0, 7).map(function (s) {
+      return { caption: str(s.caption, 80), narration: str(s.narration, 400), motion: MOTIONS.indexOf(s.motion) >= 0 ? s.motion : 'zoom-in', image_prompt: str(s.image_prompt, 600) };
+    }).filter(function (s) { return s.narration && s.image_prompt; });
+    if (scenes.length < 2) return null;
+    var quiz = null, q = raw.quiz;
+    if (q && Array.isArray(q.options) && q.options.length >= 2 && typeof q.answer === 'number' && q.answer >= 0 && q.answer < 4 && q.options[q.answer] != null) {
+      quiz = { q: str(q.q, 160), options: q.options.slice(0, 4).map(function (o) { return str(o, 120); }), answer: q.answer, explain: str(q.explain, 300) };
+    }
+    return { title: str(raw.title, 80) || 'Bài học mới', topic: str(raw.topic, 20), style_guide: str(raw.style_guide, 400), scenes: scenes, quiz: quiz };
+  }
+
+  async function makeLesson(question) {
+    var j = await gemini(state.cfg.tmodel, {
+      systemInstruction: { parts: [{ text: SYSTEM }] },
+      contents: [{ role: 'user', parts: [{ text: 'Bé hỏi: "' + question + '"' }] }],
+      generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
+    });
+    var text = partsOf(j).filter(function (p) { return p.text && !p.thought; }).map(function (p) { return p.text; }).join('').trim()
+      .replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
+    var raw; try { raw = JSON.parse(text); } catch (e) { throw new Error('Gemini trả về dữ liệu không đọc được, con hỏi lại nhé.'); }
+    var L = cleanLesson(raw);
+    if (!L) throw new Error('Kịch bản bị thiếu cảnh, con hỏi lại nhé.');
+    return L;
+  }
+
+  async function makeImage(prompt, styleGuide) {
+    var full = STYLE_BASE + ' ' + (styleGuide ? 'Recurring characters and look: ' + styleGuide + '. ' : '') +
+      'Scene: ' + prompt + '. No text, letters, numbers or captions anywhere in the image. Wide 16:9 composition.';
+    if (state.imgCache[full]) return state.imgCache[full];
+    var base = { contents: [{ parts: [{ text: full }] }] }, j;
+    try {
+      j = await gemini(state.cfg.imodel, Object.assign({}, base, { generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: '16:9' } } }));
+    } catch (e) {
+      if (e.status !== 400 || e.badkey) throw e;
+      j = await gemini(state.cfg.imodel, Object.assign({}, base, { generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } }));
+    }
+    var part = partsOf(j).filter(function (p) { return (p.inlineData || p.inline_data) && !p.thought; })[0];
+    var d = part && (part.inlineData || part.inline_data);
+    if (!d || !d.data) throw new Error('Gemini không trả về ảnh (có thể bộ lọc an toàn đã chặn cảnh này).');
+    var out = { mime: d.mimeType || d.mime_type || 'image/png', data: d.data };
+    state.imgCache[full] = out;
+    return out;
+  }
+
+  /* ---- vẽ giao diện ---- */
+  function renderLesson() {
+    var L = state.lesson, root = $('lesson');
+    if (!L) { root.hidden = true; $('quiz').hidden = true; return; }
+    root.hidden = false; root.textContent = '';
+    var sc = L.scenes[state.idx];
+    var head = el('div', 'lesson-head'); head.appendChild(el('h2', null, L.title));
+    var ready = L.scenes.filter(function (s) { return s.img; }).length;
+    head.appendChild(el('span', 'tag', (L.topic ? L.topic + ' · ' : '') + 'tranh ' + ready + '/' + L.scenes.length));
+    root.appendChild(head);
+
+    var stage = el('div', 'stage'); stage.setAttribute('role', 'img'); stage.setAttribute('aria-label', sc.caption);
+    if (sc.img) {
+      var im = el('img'); im.src = sc.img; im.alt = sc.caption;
+      im.style.setProperty('--kb', sc.motion); im.style.setProperty('--dur', dur(sc) + 's');
+      stage.appendChild(im);
+    } else if (sc.failed) {
+      var f = el('div', 'ph fail'); f.appendChild(el('span', null, sc.error || 'Cô vẽ chưa được tranh này.'));
+      var rb = el('button', null, 'Vẽ lại'); rb.type = 'button'; rb.onclick = function () { loadImage(state.idx); };
+      f.appendChild(rb); stage.appendChild(f);
+    } else {
+      stage.appendChild(el('div', 'ph', 'Cô đang vẽ tranh…'));
+    }
+    root.appendChild(stage);
+    root.appendChild(el('p', 'caption', sc.caption));
+    root.appendChild(el('p', 'narration', sc.narration));
+
+    var ctl = el('div', 'controls');
+    var prev = el('button', 'ctl', 'Quay lại'); prev.type = 'button'; prev.disabled = state.idx === 0; prev.onclick = function () { go(state.idx - 1, state.playing); };
+    var play = el('button', 'ctl play', state.playing ? 'Dừng' : (state.idx === 0 ? 'Nghe kể' : 'Nghe tiếp')); play.type = 'button'; play.onclick = togglePlay;
+    var next = el('button', 'ctl', 'Tiếp'); next.type = 'button'; next.disabled = state.idx >= L.scenes.length - 1; next.onclick = function () { go(state.idx + 1, state.playing); };
+    var dots = el('div', 'dots');
+    L.scenes.forEach(function (s, i) {
+      var d = el('button', 'dot' + (i < state.idx ? ' done' : '') + (s.img ? ' ready' : '')); d.type = 'button';
+      d.setAttribute('aria-label', 'Cảnh ' + (i + 1));
+      if (i === state.idx) d.setAttribute('aria-current', 'true');
+      d.onclick = function () { go(i, state.playing); };
+      dots.appendChild(d);
+    });
+    ctl.appendChild(prev); ctl.appendChild(play); ctl.appendChild(next); ctl.appendChild(dots);
+    root.appendChild(ctl);
+    renderQuiz();
+  }
+
+  function renderQuiz() {
+    var box = $('quiz'), L = state.lesson, Q = L && L.quiz;
+    if (!Q || state.idx < L.scenes.length - 1) { box.hidden = true; return; }
+    box.hidden = false; box.textContent = '';
+    box.appendChild(el('h2', null, 'Thử tài của bé'));
+    box.appendChild(el('p', 'q', Q.q));
+    var opts = el('div', 'opts'), ex = el('p', 'explain'); ex.setAttribute('role', 'status');
+    Q.options.forEach(function (t, i) {
+      var b = el('button', 'opt', t); b.type = 'button';
+      b.onclick = function () {
+        if (i === Q.answer) { b.classList.add('right'); ex.textContent = Q.explain || 'Giỏi quá!'; opts.querySelectorAll('.opt').forEach(function (x) { x.disabled = true; }); }
+        else { b.classList.add('wrong'); ex.textContent = 'Chưa đúng rồi, con thử lại nhé!'; b.disabled = true; }
+      };
+      opts.appendChild(b);
+    });
+    box.appendChild(opts); box.appendChild(ex);
+  }
+
+  /* ---- tải ảnh (2 ảnh cùng lúc) ---- */
+  async function loadImage(i) {
+    var L = state.lesson, run = state.run, sc = L.scenes[i];
+    sc.failed = false; if (i === state.idx) renderLesson();
+    try {
+      var r = await makeImage(sc.image_prompt, L.style_guide);
+      if (run !== state.run) return;
+      sc.img = 'data:' + r.mime + ';base64,' + r.data;
+      var pre = new Image(); pre.src = sc.img;
+    } catch (e) {
+      if (run !== state.run) return;
+      sc.failed = true; sc.error = e.message;
+    }
+    if (run === state.run) renderLesson();
+  }
+  function loadAllImages() {
+    var run = state.run, order = state.lesson.scenes.map(function (_, i) { return i; }), active = 0;
+    function pump() {
+      while (active < 2 && order.length && run === state.run) {
+        var i = order.shift(); active++;
+        loadImage(i).then(function () { active--; pump(); });
+      }
+    }
+    pump();
+  }
+
+  /* ---- giọng kể ---- */
+  function clearTimers() { state.timers.forEach(clearTimeout); state.timers = []; }
+  function stopSpeech() { state.token++; clearTimers(); try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
+  function pickVoice() {
+    try { state.voice = (speechSynthesis.getVoices() || []).filter(function (v) { return /^vi/i.test(v.lang); })[0] || null; } catch (e) { state.voice = null; }
+    $('voicenote').textContent = state.voice || !window.speechSynthesis ? '' : 'Máy này chưa có giọng đọc tiếng Việt, nên tranh sẽ tự chuyển cảnh và bé đọc chữ trên màn hình nhé.';
+  }
+  function speakScene() {
+    var sc = state.lesson.scenes[state.idx], my = ++state.token, done = false;
+    var text = sc.caption + '. ' + sc.narration, est = Math.max(dur(sc) * 1000, 4000);
+    function finish() {
+      if (done || my !== state.token || !state.playing) return;
+      done = true; clearTimers();
+      state.timers.push(setTimeout(function () {
+        if (my !== state.token || !state.playing) return;
+        if (state.idx < state.lesson.scenes.length - 1) { state.idx++; renderLesson(); speakScene(); }
+        else { state.playing = false; renderLesson(); }
+      }, 700));
+    }
+    var canSpeak = false;
+    try {
+      if (window.speechSynthesis && state.voice) {
+        speechSynthesis.cancel();
+        var u = new SpeechSynthesisUtterance(text);
+        u.lang = state.voice.lang; u.voice = state.voice; u.rate = 0.88; u.pitch = 1.1; u.onend = finish; u.onerror = finish;
+        speechSynthesis.speak(u); canSpeak = true;
+      }
+    } catch (e) { canSpeak = false; }
+    state.timers.push(setTimeout(finish, canSpeak ? est * 2.5 + 3000 : est));
+  }
+  function togglePlay() {
+    if (state.playing) { state.playing = false; stopSpeech(); renderLesson(); return; }
+    state.playing = true; renderLesson(); speakScene();
+  }
+  function go(i, keep) {
+    if (i < 0 || i >= state.lesson.scenes.length) return;
+    stopSpeech(); state.idx = i; state.playing = !!keep; renderLesson(); if (state.playing) speakScene();
+  }
+
+  /* ---- hỏi ---- */
+  async function ask(q) {
+    if (!state.cfg.key) { $('settings').open = true; setStatus('Con cần nhập khóa Gemini API trong phần Cài đặt trước nhé.', true); return; }
+    var btn = $('go'); btn.disabled = true; stopSpeech(); state.playing = false; state.run++; state.lesson = null; renderLesson();
+    var root = $('lesson'); root.hidden = false; root.textContent = '';
+    root.appendChild(el('div', 'loading', 'Cô đang nghĩ kịch bản cho con…')); setStatus('');
+    try {
+      var L = await makeLesson(q);
+      if (L.refuse) { root.hidden = true; setStatus(L.refuse); return; }
+      L.scenes.forEach(function (s) { s.img = null; s.failed = false; });
+      state.lesson = L; state.idx = 0; renderLesson();
+      root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      loadAllImages();
+    } catch (e) {
+      root.hidden = true; setStatus(e.message || 'Cô chưa kể được câu này, con thử lại nhé.', true);
+    } finally { btn.disabled = false; }
+  }
+
+  SUGGEST.forEach(function (t) {
+    var b = el('button', 'chip', t); b.type = 'button';
+    b.onclick = function () { $('q').value = t; ask(t); };
+    $('chips').appendChild(b);
+  });
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var q = $('q').value.trim();
+    if (q.length >= 3) ask(q); else setStatus('Con gõ câu hỏi trước nhé.', true);
+  });
+  loadCfg();
+  try { if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } } catch (e) {}
+})();
+</script>
+</body>
+</html>
