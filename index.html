@@ -197,7 +197,7 @@ details.settings .st.ok { color: var(--leaf); }
   var $ = function (id) { return document.getElementById(id); };
   var state = { lesson: null, idx: 0, playing: false, token: 0, voice: null, timers: [], run: 0, cfg: JSON.parse(JSON.stringify(DEF)), imgCache: {}, audioCache: {} };
   var ui = { tag: null, dots: [] };
-  var dead = {}; /* khóa Gemini -> thời điểm được dùng lại */
+  var dead = {}, famMsg = {}; /* "khóa|mô hình" -> thời điểm được dùng lại; mô hình -> lời báo lỗi gần nhất */
   var audioEl = new Audio();
   var SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
   function unlockAudio() { try { audioEl.src = SILENT; var p = audioEl.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
@@ -235,7 +235,7 @@ details.settings .st.ok { color: var(--leaf); }
   function saveCfg() {
     var c = { gkeys: parseKeys($('gkeys').value), okey: $('okey').value.trim(), usevideo: $('usevideo').checked };
     MODEL_FIELDS.forEach(function (f) { c[f] = $(f).value.trim() || DEF[f]; });
-    state.cfg = c; dead = {};
+    state.cfg = c; dead = {}; famMsg = {};
     try { localStorage.setItem('behoi.cfg', JSON.stringify(c)); } catch (e) { setStatus('Trình duyệt không cho lưu cài đặt, khóa chỉ dùng trong lần mở trang này.'); }
     showKeyState();
   }
@@ -251,16 +251,18 @@ details.settings .st.ok { color: var(--leaf); }
   /* ---- gọi Gemini: nhiều khóa, hết hạn mức thì chuyển khóa kế tiếp ---- */
   function friendlyG(status, text) {
     if (/API key not valid|API_KEY_INVALID/i.test(text)) return 'Khóa Gemini chưa đúng hoặc đã hết hạn.';
-    if (status === 403) return 'Khóa Gemini này không được phép dùng mô hình đó (hoặc đã bị chặn).';
-    if (status === 404) return 'Không tìm thấy mô hình Gemini. Đổi tên mô hình trong Cài đặt theo danh sách mới của Google.';
-    if (status === 429) return 'Gemini đã hết hạn mức hoặc đang bận.';
-    var m = text.match(/"message"\s*:\s*"([^"]{1,200})/);
+    var m = text.match(/"message"\s*:\s*"([^"]{1,160})/), tail = m ? ' [' + m[1] + ']' : '';
+    if (status === 403) return 'Khóa Gemini này không được phép dùng mô hình đó (có thể mô hình cần tài khoản trả phí).' + tail;
+    if (status === 404) return 'Không tìm thấy mô hình Gemini. Đổi tên mô hình trong Cài đặt theo danh sách mới của Google.' + tail;
+    if (status === 429) return 'Gemini đã hết hạn mức, hoặc mô hình này cần tài khoản trả phí (bản miễn phí không có hạn mức).' + tail;
     return 'Gemini báo lỗi ' + status + (m ? ': ' + m[1] : '.');
   }
   async function gfetch(path, body, timeoutMs) {
     if (!hasGemini()) throw mkErr('Chưa có khóa Gemini.', 0, { nokey: true });
-    var now = Date.now(), keys = state.cfg.gkeys.filter(function (k) { return (dead[k] || 0) < now; }), lastErr = null;
-    if (!keys.length) throw mkErr('Mọi khóa Gemini đều đang hết hạn mức hoặc không hợp lệ.', 429, { quota: true });
+    /* hết hạn mức tính riêng cho từng mô hình: video hết hạn mức không làm khóa ngừng viết kịch bản hay vẽ tranh */
+    var fam = (body && body.model) || (path.match(/models\/([^:]+)/) || [])[1] || path;
+    var now = Date.now(), keys = state.cfg.gkeys.filter(function (k) { return (dead[k + '|' + fam] || 0) < now; }), lastErr = null;
+    if (!keys.length) throw mkErr(famMsg[fam] || 'Mọi khóa Gemini đều đang hết hạn mức hoặc không hợp lệ.', 429, { quota: true });
     for (var ki = 0; ki < keys.length; ki++) {
       var key = keys[ki];
       for (var a = 0; a < 2; a++) {
@@ -275,8 +277,9 @@ details.settings .st.ok { color: var(--leaf); }
         var quota = res.status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(text);
         var bad = quota || res.status === 401 || res.status === 403 || /API key not valid|API_KEY_INVALID/i.test(text);
         if (bad) {
-          dead[key] = Date.now() + (quota ? 5 * 60e3 : 24 * 3600e3);
+          dead[key + '|' + fam] = Date.now() + (quota ? 5 * 60e3 : 24 * 3600e3);
           lastErr = mkErr(friendlyG(res.status, text), res.status || 429, { quota: true });
+          famMsg[fam] = lastErr.message;
           if (ki < keys.length - 1) noteProvider('Khóa Gemini #' + (state.cfg.gkeys.indexOf(key) + 1) + (quota ? ' hết hạn mức' : ' không dùng được') + ', đang chuyển sang khóa #' + (state.cfg.gkeys.indexOf(keys[ki + 1]) + 1) + '.');
           break;
         }
