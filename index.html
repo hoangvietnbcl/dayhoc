@@ -42,26 +42,35 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .status.err { color: var(--coral); }
 
 details.settings { padding: 0; }
-details.settings summary { padding: 14px 18px; font-weight: 800; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
-details.settings summary::-webkit-details-marker { display: none; }
-details.settings summary .st { font-weight: 700; color: var(--muted); }
-details.settings summary .st.ok { color: var(--leaf); }
-.sbody { padding: 0 18px 18px; display: grid; gap: 12px; }
+details.settings > summary { padding: 14px 18px; font-weight: 800; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+details.settings > summary::-webkit-details-marker { display: none; }
+details.settings .st { font-weight: 700; color: var(--muted); }
+details.settings .st.ok { color: var(--leaf); }
+.sbody { padding: 0 18px 18px; display: grid; gap: 14px; }
 .sbody label { display: grid; gap: 4px; font-weight: 700; font-size: .95rem; }
-.sbody input { font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+.sbody input[type="text"], .sbody input[type="password"], .sbody textarea { font: inherit; padding: 10px 12px; border-radius: 12px; border: 2px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; width: 100%; }
+.sbody textarea { resize: vertical; min-height: 84px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9rem; }
+.sbody label.chk { display: flex; gap: 10px; align-items: flex-start; font-weight: 700; }
+.sbody label.chk input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+.sbody .hint { font-weight: 600; color: var(--muted); font-size: .88rem; }
 .sbody .warn { margin: 0; font-size: .9rem; color: var(--muted); }
 .sbody .acts { display: flex; gap: 10px; flex-wrap: wrap; }
 .sbody .btn { padding: 10px 18px; }
 .btn-save { background: var(--leaf); color: #fff; }
 .btn-clear { background: var(--bg); border: 2px solid var(--line) !important; }
 .sbody a { color: var(--sky); }
+.adv { border: 2px solid var(--line); border-radius: 14px; padding: 0; }
+.adv > summary { padding: 10px 14px; font-weight: 800; cursor: pointer; }
+.adv .advbody { padding: 0 14px 14px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 
 .lesson-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
 .lesson-head h2 { font-size: clamp(1.4rem, 4.5vw, 1.9rem); font-weight: 800; }
 .tag { font-size: .85rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--leaf); }
 
 .stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 18px; overflow: hidden; border: 2px solid var(--line); background: var(--bg); }
-.stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; animation: fadein .7s ease both, var(--kb) var(--dur, 8s) ease-in-out both; }
+.stage img, .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stage img { transform-origin: 50% 50%; animation: fadein .7s ease both, var(--kb) var(--dur, 8s) ease-in-out both; }
+.stage video { animation: fadein .5s ease both; background: #000; }
 @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 @keyframes zoom-in { from { transform: scale(1); } to { transform: scale(1.14); } }
 @keyframes zoom-out { from { transform: scale(1.14); } to { transform: scale(1); } }
@@ -71,6 +80,9 @@ details.settings summary .st.ok { color: var(--leaf); }
 .ph.fail { animation: none; background: var(--bg); }
 @keyframes shimmer { to { background-position: -200% 0; } }
 .ph button { background: var(--sun); color: var(--sun-ink); border: 0; border-radius: 12px; padding: 8px 16px; font-weight: 800; }
+.vnote { margin: 8px 0 0; font-size: .9rem; font-weight: 700; color: var(--muted); }
+.vnote.work::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--sun); margin-right: 8px; animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(1.5); opacity: .5; } }
 
 .caption { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 5vw, 2rem); margin: 14px 0 4px; line-height: 1.15; text-wrap: balance; }
 .narration { font-size: clamp(1.1rem, 3.4vw, 1.35rem); margin: 0; min-height: 3.2em; max-width: 62ch; }
@@ -83,6 +95,7 @@ details.settings summary .st.ok { color: var(--leaf); }
 .dot[aria-current="true"] { background: var(--sun); border-color: var(--sun); }
 .dot.done { background: var(--line); }
 .dot.ready { border-color: var(--leaf); }
+.dot.moving { border-color: var(--sky); box-shadow: 0 0 0 2px var(--sky); }
 .quiz h2 { font-size: 1.4rem; margin-bottom: 12px; }
 .quiz .q { font-weight: 800; font-size: 1.2rem; margin: 0 0 12px; }
 .opts { display: grid; gap: 10px; }
@@ -92,32 +105,49 @@ details.settings summary .st.ok { color: var(--leaf); }
 .explain { margin: 12px 0 0; font-weight: 600; }
 .loading { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
 .note { color: var(--muted); font-size: .9rem; margin: 0; }
-@media (prefers-reduced-motion: reduce) { .stage img { animation: fadein .3s both; } .ph { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .stage img { animation: fadein .3s both; } .ph, .vnote.work::before { animation: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="brand">
     <div class="sunmark" aria-hidden="true"></div>
-    <div><h1>Bé Hỏi Vì Sao</h1><p>Bé hỏi một câu, cô vẽ tranh và kể thành một đoạn phim nhỏ.</p></div>
+    <div><h1>Bé Hỏi Vì Sao</h1><p>Bé hỏi một câu, cô vẽ tranh, làm cho tranh cử động và kể thành một đoạn phim nhỏ.</p></div>
   </header>
 
   <details class="card settings" id="settings">
-    <summary><span>Cài đặt Gemini</span><span class="st" id="keystate">Chưa có khóa</span></summary>
+    <summary><span>Cài đặt khóa và mô hình</span><span class="st" id="keystate">Chưa có khóa</span></summary>
     <div class="sbody">
-      <label for="key">Khóa Gemini API
-        <input id="key" type="password" autocomplete="off" placeholder="Dán khóa lấy từ aistudio.google.com/apikey">
+      <label for="gkeys">Khóa Gemini (mỗi dòng một khóa)
+        <textarea id="gkeys" autocomplete="off" spellcheck="false" placeholder="Khóa thứ nhất&#10;Khóa dự phòng khi khóa thứ nhất hết hạn mức"></textarea>
+        <span class="hint">Khóa đầu tiên được dùng trước. Khi khóa hết hạn mức, app tự chuyển sang khóa kế tiếp.</span>
       </label>
-      <label for="tmodel">Mô hình viết kịch bản
-        <input id="tmodel" type="text" autocomplete="off">
+      <label for="okey">Khóa OpenAI / ChatGPT (không bắt buộc, dự phòng khi mọi khóa Gemini hết hạn mức)
+        <input id="okey" type="password" autocomplete="off" placeholder="sk-...">
+        <span class="hint">OpenAI làm dự phòng cho kịch bản, tranh và giọng đọc. Phần làm tranh cử động chỉ có Gemini, vì API video của OpenAI (Sora) đã ngừng.</span>
       </label>
-      <label for="imodel">Mô hình vẽ tranh
-        <input id="imodel" type="text" autocomplete="off">
+      <label class="chk" for="usevideo">
+        <input id="usevideo" type="checkbox">
+        <span>Làm tranh cử động bằng video Gemini<br><span class="hint">Tốn nhiều hạn mức và chậm hơn nhiều so với tranh tĩnh (mỗi câu hỏi có 5 đến 6 đoạn video). Tắt đi thì tranh chỉ chuyển động nhẹ như quay phim.</span></span>
       </label>
-      <p class="warn">Khóa chỉ được lưu trong trình duyệt của thiết bị này và gửi thẳng tới Google. Đừng ghi khóa vào file index.html hay đưa lên GitHub. Nên tạo khóa riêng cho app này và đặt hạn mức chi tiêu trong Google AI Studio. Đây là trang tĩnh nên không có server giữ khóa: ai biết khóa của bạn đều dùng được. Lấy khóa tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.</p>
+      <details class="adv">
+        <summary>Nâng cao: tên mô hình và giọng</summary>
+        <div class="advbody">
+          <label for="tmodel">Gemini viết kịch bản<input id="tmodel" type="text" autocomplete="off"></label>
+          <label for="imodel">Gemini vẽ tranh<input id="imodel" type="text" autocomplete="off"></label>
+          <label for="vmodel">Gemini làm video<input id="vmodel" type="text" autocomplete="off"></label>
+          <label for="smodel">Gemini giọng kể<input id="smodel" type="text" autocomplete="off"></label>
+          <label for="voice">Tên giọng Gemini (Sulafat, Leda, Puck, Kore)<input id="voice" type="text" autocomplete="off"></label>
+          <label for="otext">OpenAI viết kịch bản<input id="otext" type="text" autocomplete="off"></label>
+          <label for="oimage">OpenAI vẽ tranh<input id="oimage" type="text" autocomplete="off"></label>
+          <label for="otts">OpenAI giọng kể<input id="otts" type="text" autocomplete="off"></label>
+          <label for="ovoice">Tên giọng OpenAI (coral, nova, shimmer)<input id="ovoice" type="text" autocomplete="off"></label>
+        </div>
+      </details>
+      <p class="warn">Các khóa chỉ lưu trong trình duyệt của thiết bị này và gửi thẳng tới Google hoặc OpenAI. Đừng ghi khóa vào file hay đưa lên GitHub. Nên tạo khóa riêng cho app này và đặt hạn mức chi tiêu. Đây là trang tĩnh nên không có server giữ khóa: ai biết khóa của bạn đều dùng được. Lấy khóa tại <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> và <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a>.</p>
       <div class="acts">
         <button type="button" class="btn btn-save" id="save">Lưu</button>
-        <button type="button" class="btn btn-clear" id="clear">Xóa khóa</button>
+        <button type="button" class="btn btn-clear" id="clear">Xóa hết khóa</button>
       </div>
     </div>
   </details>
@@ -130,6 +160,7 @@ details.settings summary .st.ok { color: var(--leaf); }
     </form>
     <div class="chips" id="chips"></div>
     <p class="status" id="status" role="status"></p>
+    <p class="note" id="provnote" role="status"></p>
   </section>
 
   <section class="card" id="lesson" aria-live="polite" hidden></section>
@@ -139,8 +170,14 @@ details.settings summary .st.ok { color: var(--leaf); }
 
 <script>
 (function () {
-  var BASE = 'https://generativelanguage.googleapis.com/v1beta';
-  var DEF = { key: '', tmodel: 'gemini-3-flash-preview', imodel: 'gemini-3.1-flash-image' };
+  var GBASE = 'https://generativelanguage.googleapis.com/v1beta';
+  var OBASE = 'https://api.openai.com/v1';
+  var DEF = {
+    gkeys: [], okey: '', usevideo: true,
+    tmodel: 'gemini-3-flash-preview', imodel: 'gemini-3.1-flash-image', vmodel: 'gemini-omni-1.1-flash', smodel: 'gemini-3.8-flash-tts', voice: 'Sulafat',
+    otext: 'gpt-5-mini', oimage: 'gpt-image-2', otts: 'gpt-4o-mini-tts', ovoice: 'coral'
+  };
+  var MODEL_FIELDS = ['tmodel', 'imodel', 'vmodel', 'smodel', 'voice', 'otext', 'oimage', 'otts', 'ovoice'];
   var MOTIONS = ['zoom-in', 'zoom-out', 'pan-left', 'pan-right'];
   var SUGGEST = ['Vì sao có cầu vồng?', 'Vì sao ban đêm có trăng?', 'Chú cảnh sát giúp gì cho mọi người?', 'Tiền từ đâu mà có?', 'Vì sao cây cần nước?'];
   var STYLE_BASE = "Cheerful children's picture book illustration for ages 6 to 8, soft watercolor and gouache, bright friendly colors, simple rounded shapes, one clear focal subject, warm light.";
@@ -151,76 +188,149 @@ details.settings summary .st.ok { color: var(--leaf); }
     '- Nếu câu hỏi không phù hợp với trẻ em hoặc không thuộc chủ đề thiên nhiên/xã hội, chỉ trả về {"refuse":"lời nhẹ nhàng gợi ý bé hỏi chủ đề khác"}.',
     '- style_guide: mô tả bằng TIẾNG ANH các nhân vật và hình dáng cố định (ví dụ: "a small round cloud character with a smiling face and rosy cheeks; a girl with a yellow raincoat"), để mọi tranh giống nhau.',
     '- image_prompt: mô tả bằng TIẾNG ANH một cảnh tĩnh, cụ thể, không có chữ trong tranh.',
-    '- motion: một trong zoom-in, zoom-out, pan-left, pan-right, chọn cho hợp cảnh.',
+    '- motion_prompt: mô tả bằng TIẾNG ANH chuyển động đơn giản, nhẹ nhàng xảy ra trong cảnh (ví dụ: "raindrops fall from the cloud and the girl splashes in a puddle"), dùng để làm tranh cử động.',
+    '- motion: một trong zoom-in, zoom-out, pan-left, pan-right, chọn cho hợp cảnh (dùng khi chỉ có tranh tĩnh).',
     'Chỉ trả về JSON:',
-    '{"title":"...","topic":"thiên nhiên"|"xã hội","style_guide":"...","scenes":[{"caption":"tối đa 7 từ","narration":"...","motion":"...","image_prompt":"..."}],"quiz":{"q":"...","options":["...","...","..."],"answer":0,"explain":"..."}}'
+    '{"title":"...","topic":"thiên nhiên"|"xã hội","style_guide":"...","scenes":[{"caption":"tối đa 7 từ","narration":"...","motion":"...","image_prompt":"...","motion_prompt":"..."}],"quiz":{"q":"...","options":["...","...","..."],"answer":0,"explain":"..."}}'
   ].join('\n');
 
   var $ = function (id) { return document.getElementById(id); };
-  var state = { lesson: null, idx: 0, playing: false, token: 0, voice: null, timers: [], run: 0, cfg: Object.assign({}, DEF), imgCache: {} };
+  var state = { lesson: null, idx: 0, playing: false, token: 0, voice: null, timers: [], run: 0, cfg: JSON.parse(JSON.stringify(DEF)), imgCache: {}, audioCache: {} };
+  var ui = { tag: null, dots: [] };
+  var dead = {}; /* khóa Gemini -> thời điểm được dùng lại */
+  var audioEl = new Audio();
+  var SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+  function unlockAudio() { try { audioEl.src = SILENT; var p = audioEl.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
 
   function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function setStatus(t, err) { var s = $('status'); s.textContent = t || ''; s.className = 'status' + (err ? ' err' : ''); }
+  function noteProvider(t) { $('provnote').textContent = t || ''; }
   function dur(sc) { return Math.max(6, Math.round(sc.narration.length * 0.09)); }
   function str(v, n) { return String(v == null ? '' : v).trim().slice(0, n); }
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function mkErr(msg, status, extra) { return Object.assign(new Error(msg), { status: status || 0 }, extra || {}); }
+  function hasGemini() { return state.cfg.gkeys.length > 0; }
+  function hasAnyKey() { return hasGemini() || !!state.cfg.okey; }
 
   /* ---- cài đặt (lưu trong trình duyệt) ---- */
+  function parseKeys(t) {
+    var seen = {}, out = [];
+    String(t || '').split(/[\s,;]+/).forEach(function (k) { k = k.trim(); if (k && !seen[k]) { seen[k] = 1; out.push(k); } });
+    return out;
+  }
+  function fillForm() {
+    $('gkeys').value = state.cfg.gkeys.join('\n'); $('okey').value = state.cfg.okey; $('usevideo').checked = !!state.cfg.usevideo;
+    MODEL_FIELDS.forEach(function (f) { $(f).value = state.cfg[f]; });
+  }
   function loadCfg() {
-    try { var s = JSON.parse(localStorage.getItem('behoi.cfg') || '{}'); state.cfg = Object.assign({}, DEF, s); } catch (e) {}
-    $('key').value = state.cfg.key; $('tmodel').value = state.cfg.tmodel; $('imodel').value = state.cfg.imodel;
-    showKeyState();
+    try {
+      var s = JSON.parse(localStorage.getItem('behoi.cfg') || '{}');
+      if (s.key && !(s.gkeys && s.gkeys.length)) s.gkeys = [s.key]; /* bản cũ chỉ có một khóa */
+      delete s.key;
+      state.cfg = Object.assign({}, DEF, s);
+      if (!Array.isArray(state.cfg.gkeys)) state.cfg.gkeys = [];
+    } catch (e) {}
+    fillForm(); showKeyState();
   }
   function saveCfg() {
-    state.cfg = { key: $('key').value.trim(), tmodel: $('tmodel').value.trim() || DEF.tmodel, imodel: $('imodel').value.trim() || DEF.imodel };
-    try { localStorage.setItem('behoi.cfg', JSON.stringify(state.cfg)); } catch (e) { setStatus('Trình duyệt không cho lưu cài đặt, khóa chỉ dùng trong lần mở trang này.'); }
+    var c = { gkeys: parseKeys($('gkeys').value), okey: $('okey').value.trim(), usevideo: $('usevideo').checked };
+    MODEL_FIELDS.forEach(function (f) { c[f] = $(f).value.trim() || DEF[f]; });
+    state.cfg = c; dead = {};
+    try { localStorage.setItem('behoi.cfg', JSON.stringify(c)); } catch (e) { setStatus('Trình duyệt không cho lưu cài đặt, khóa chỉ dùng trong lần mở trang này.'); }
     showKeyState();
   }
   function showKeyState() {
-    var s = $('keystate'), ok = !!state.cfg.key;
-    s.textContent = ok ? 'Đã có khóa' : 'Chưa có khóa'; s.className = 'st' + (ok ? ' ok' : '');
-    if (!ok) $('settings').open = true;
+    var n = state.cfg.gkeys.length, o = !!state.cfg.okey, s = $('keystate');
+    s.textContent = !n && !o ? 'Chưa có khóa' : 'Gemini: ' + n + ' khóa · OpenAI: ' + (o ? 'có' : 'không');
+    s.className = 'st' + (n || o ? ' ok' : '');
+    if (!n && !o) $('settings').open = true;
   }
-  $('save').onclick = function () { saveCfg(); if (state.cfg.key) { $('settings').open = false; setStatus('Đã lưu. Con hỏi cô nhé!'); } };
-  $('clear').onclick = function () {
-    $('key').value = ''; saveCfg(); setStatus('Đã xóa khóa khỏi trình duyệt này.');
-  };
+  $('save').onclick = function () { saveCfg(); if (hasAnyKey()) { $('settings').open = false; setStatus('Đã lưu. Con hỏi cô nhé!'); } };
+  $('clear').onclick = function () { $('gkeys').value = ''; $('okey').value = ''; saveCfg(); setStatus('Đã xóa các khóa khỏi trình duyệt này.'); };
 
-  /* ---- gọi Gemini trực tiếp từ trình duyệt ---- */
-  async function gemini(model, body) {
-    if (!state.cfg.key) throw Object.assign(new Error('Con cần nhập khóa Gemini API trong phần Cài đặt trước nhé.'), { code: 'nokey' });
-    var last;
-    for (var a = 0; a < 3; a++) {
-      var res;
-      try {
-        res = await fetch(BASE + '/models/' + encodeURIComponent(model) + ':generateContent', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': state.cfg.key }, body: JSON.stringify(body)
-        });
-      } catch (e) { throw Object.assign(new Error('Không kết nối được tới Google. Kiểm tra mạng rồi thử lại nhé.'), { code: 'net' }); }
-      if (res.ok) return res.json();
-      var text = await res.text();
-      last = Object.assign(new Error(friendly(res.status, text)), { status: res.status, badkey: /API key|API_KEY/i.test(text) });
-      if (res.status !== 429 && res.status < 500) break;
-      await sleep(800 * Math.pow(a + 1, 2));
-    }
-    throw last;
-  }
-  function friendly(status, text) {
-    if (/API key|API_KEY/i.test(text)) return 'Khóa API chưa đúng hoặc đã hết hạn. Kiểm tra lại trong Cài đặt.';
-    if (status === 403) return 'Khóa này không được phép dùng mô hình đó (hoặc đã bị chặn).';
-    if (status === 404) return 'Không tìm thấy mô hình. Đổi tên mô hình trong Cài đặt theo danh sách mới của Google.';
-    if (status === 429) return 'Gemini đang bận hoặc hết hạn mức. Đợi ít phút rồi thử lại nhé.';
+  /* ---- gọi Gemini: nhiều khóa, hết hạn mức thì chuyển khóa kế tiếp ---- */
+  function friendlyG(status, text) {
+    if (/API key not valid|API_KEY_INVALID/i.test(text)) return 'Khóa Gemini chưa đúng hoặc đã hết hạn.';
+    if (status === 403) return 'Khóa Gemini này không được phép dùng mô hình đó (hoặc đã bị chặn).';
+    if (status === 404) return 'Không tìm thấy mô hình Gemini. Đổi tên mô hình trong Cài đặt theo danh sách mới của Google.';
+    if (status === 429) return 'Gemini đã hết hạn mức hoặc đang bận.';
     var m = text.match(/"message"\s*:\s*"([^"]{1,200})/);
     return 'Gemini báo lỗi ' + status + (m ? ': ' + m[1] : '.');
   }
+  async function gfetch(path, body, timeoutMs) {
+    if (!hasGemini()) throw mkErr('Chưa có khóa Gemini.', 0, { nokey: true });
+    var now = Date.now(), keys = state.cfg.gkeys.filter(function (k) { return (dead[k] || 0) < now; }), lastErr = null;
+    if (!keys.length) throw mkErr('Mọi khóa Gemini đều đang hết hạn mức hoặc không hợp lệ.', 429, { quota: true });
+    for (var ki = 0; ki < keys.length; ki++) {
+      var key = keys[ki];
+      for (var a = 0; a < 2; a++) {
+        var res, text, ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, timeoutMs || 120000);
+        try {
+          res = await fetch(GBASE + path, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(body), signal: ctl.signal });
+          text = await res.text();
+        } catch (e) {
+          throw mkErr(e && e.name === 'AbortError' ? 'Gemini trả lời quá lâu.' : 'Không kết nối được tới Google. Kiểm tra mạng rồi thử lại nhé.', 0, { net: true });
+        } finally { clearTimeout(t); }
+        if (res.ok) { try { return JSON.parse(text); } catch (e) { throw mkErr('Gemini trả về dữ liệu lỗi.', 502); } }
+        var quota = res.status === 429 || /RESOURCE_EXHAUSTED|quota/i.test(text);
+        var bad = quota || res.status === 401 || res.status === 403 || /API key not valid|API_KEY_INVALID/i.test(text);
+        if (bad) {
+          dead[key] = Date.now() + (quota ? 5 * 60e3 : 24 * 3600e3);
+          lastErr = mkErr(friendlyG(res.status, text), res.status || 429, { quota: true });
+          if (ki < keys.length - 1) noteProvider('Khóa Gemini #' + (state.cfg.gkeys.indexOf(key) + 1) + (quota ? ' hết hạn mức' : ' không dùng được') + ', đang chuyển sang khóa #' + (state.cfg.gkeys.indexOf(keys[ki + 1]) + 1) + '.');
+          break;
+        }
+        if (res.status >= 500 && a === 0) { await sleep(1500); continue; }
+        throw mkErr(friendlyG(res.status, text), res.status);
+      }
+    }
+    throw lastErr || mkErr('Gemini không phản hồi.', 502);
+  }
+  function gemini(model, body) { return gfetch('/models/' + encodeURIComponent(model) + ':generateContent', body, 150000); }
   function partsOf(j) { return (j && j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || []; }
 
+  /* ---- gọi OpenAI (dự phòng) ---- */
+  function friendlyO(status, text) {
+    if (/insufficient_quota/i.test(text)) return 'Khóa OpenAI đã hết số dư hoặc hạn mức.';
+    if (status === 401) return 'Khóa OpenAI chưa đúng.';
+    if (status === 403) return 'Khóa OpenAI chưa được phép dùng mô hình này (có thể cần xác minh tổ chức).';
+    if (status === 404) return 'Không tìm thấy mô hình OpenAI. Đổi tên mô hình trong Cài đặt.';
+    if (status === 429) return 'OpenAI đang bận hoặc hết hạn mức.';
+    var m = text.match(/"message"\s*:\s*"([^"]{1,200})/);
+    return 'OpenAI báo lỗi ' + status + (m ? ': ' + m[1] : '.');
+  }
+  async function ofetch(path, body, timeoutMs, asBlob) {
+    if (!state.cfg.okey) throw mkErr('Chưa có khóa OpenAI.', 0, { nokey: true });
+    var res, out, ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, timeoutMs || 120000);
+    try {
+      res = await fetch(OBASE + path, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.cfg.okey }, body: JSON.stringify(body), signal: ctl.signal });
+      out = asBlob && res.ok ? await res.blob() : await res.text();
+    } catch (e) {
+      throw mkErr(e && e.name === 'AbortError' ? 'OpenAI trả lời quá lâu.' : 'Không kết nối được tới OpenAI.', 0, { net: true });
+    } finally { clearTimeout(t); }
+    if (!res.ok) throw mkErr(friendlyO(res.status, out), res.status);
+    if (asBlob) return out;
+    try { return JSON.parse(out); } catch (e) { throw mkErr('OpenAI trả về dữ liệu lỗi.', 502); }
+  }
+
+  /* Gemini trước, lỗi thì thử OpenAI */
+  async function gThenO(gfn, ofn, what) {
+    var gErr = null;
+    if (hasGemini()) { try { return await gfn(); } catch (e) { gErr = e; } }
+    if (state.cfg.okey) {
+      try { var r = await ofn(); if (gErr) noteProvider('Gemini gặp lỗi (' + gErr.message + ') nên phần ' + what + ' do OpenAI làm.'); return r; }
+      catch (e2) { throw gErr ? mkErr(gErr.message + ' OpenAI: ' + e2.message, e2.status || gErr.status) : e2; }
+    }
+    throw gErr || mkErr('Con cần nhập khóa Gemini hoặc OpenAI trong phần Cài đặt trước nhé.', 0, { nokey: true });
+  }
+
+  /* ---- kịch bản ---- */
   function cleanLesson(raw) {
     if (!raw || typeof raw !== 'object') return null;
     if (raw.refuse) return { refuse: str(raw.refuse, 300) };
     if (!Array.isArray(raw.scenes)) return null;
     var scenes = raw.scenes.slice(0, 7).map(function (s) {
-      return { caption: str(s.caption, 80), narration: str(s.narration, 400), motion: MOTIONS.indexOf(s.motion) >= 0 ? s.motion : 'zoom-in', image_prompt: str(s.image_prompt, 600) };
+      return { caption: str(s.caption, 80), narration: str(s.narration, 400), motion: MOTIONS.indexOf(s.motion) >= 0 ? s.motion : 'zoom-in', image_prompt: str(s.image_prompt, 600), motion_prompt: str(s.motion_prompt, 400) };
     }).filter(function (s) { return s.narration && s.image_prompt; });
     if (scenes.length < 2) return null;
     var quiz = null, q = raw.quiz;
@@ -229,53 +339,125 @@ details.settings summary .st.ok { color: var(--leaf); }
     }
     return { title: str(raw.title, 80) || 'Bài học mới', topic: str(raw.topic, 20), style_guide: str(raw.style_guide, 400), scenes: scenes, quiz: quiz };
   }
-
-  async function makeLesson(question) {
-    var j = await gemini(state.cfg.tmodel, {
-      systemInstruction: { parts: [{ text: SYSTEM }] },
-      contents: [{ role: 'user', parts: [{ text: 'Bé hỏi: "' + question + '"' }] }],
-      generationConfig: { responseMimeType: 'application/json', temperature: 0.7 }
-    });
-    var text = partsOf(j).filter(function (p) { return p.text && !p.thought; }).map(function (p) { return p.text; }).join('').trim()
-      .replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
-    var raw; try { raw = JSON.parse(text); } catch (e) { throw new Error('Gemini trả về dữ liệu không đọc được, con hỏi lại nhé.'); }
+  function parseLesson(text) {
+    text = String(text || '').trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
+    var raw; try { raw = JSON.parse(text); } catch (e) { throw mkErr('Dữ liệu kịch bản không đọc được, con hỏi lại nhé.', 502); }
     var L = cleanLesson(raw);
-    if (!L) throw new Error('Kịch bản bị thiếu cảnh, con hỏi lại nhé.');
+    if (!L) throw mkErr('Kịch bản bị thiếu cảnh, con hỏi lại nhé.', 502);
     return L;
   }
+  async function makeLesson(question) {
+    var prompt = 'Bé hỏi: "' + question + '"';
+    return gThenO(async function () {
+      var j = await gemini(state.cfg.tmodel, { systemInstruction: { parts: [{ text: SYSTEM }] }, contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json', temperature: 0.7 } });
+      return parseLesson(partsOf(j).filter(function (p) { return p.text && !p.thought; }).map(function (p) { return p.text; }).join(''));
+    }, async function () {
+      var j = await ofetch('/chat/completions', { model: state.cfg.otext, messages: [{ role: 'system', content: SYSTEM }, { role: 'user', content: prompt }], response_format: { type: 'json_object' } }, 120000);
+      return parseLesson(j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content);
+    }, 'kịch bản');
+  }
 
+  /* ---- tranh ---- */
   async function makeImage(prompt, styleGuide) {
     var full = STYLE_BASE + ' ' + (styleGuide ? 'Recurring characters and look: ' + styleGuide + '. ' : '') +
       'Scene: ' + prompt + '. No text, letters, numbers or captions anywhere in the image. Wide 16:9 composition.';
     if (state.imgCache[full]) return state.imgCache[full];
-    var base = { contents: [{ parts: [{ text: full }] }] }, j;
-    try {
-      j = await gemini(state.cfg.imodel, Object.assign({}, base, { generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: '16:9' } } }));
-    } catch (e) {
-      if (e.status !== 400 || e.badkey) throw e;
-      j = await gemini(state.cfg.imodel, Object.assign({}, base, { generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } }));
-    }
-    var part = partsOf(j).filter(function (p) { return (p.inlineData || p.inline_data) && !p.thought; })[0];
-    var d = part && (part.inlineData || part.inline_data);
-    if (!d || !d.data) throw new Error('Gemini không trả về ảnh (có thể bộ lọc an toàn đã chặn cảnh này).');
-    var out = { mime: d.mimeType || d.mime_type || 'image/png', data: d.data };
+    var out = await gThenO(async function () {
+      var base = { contents: [{ parts: [{ text: full }] }] }, j;
+      try { j = await gemini(state.cfg.imodel, Object.assign({}, base, { generationConfig: { responseModalities: ['TEXT', 'IMAGE'], imageConfig: { aspectRatio: '16:9' } } })); }
+      catch (e) { if (e.status !== 400) throw e; j = await gemini(state.cfg.imodel, Object.assign({}, base, { generationConfig: { responseModalities: ['TEXT', 'IMAGE'] } })); }
+      var part = partsOf(j).filter(function (p) { return (p.inlineData || p.inline_data) && !p.thought; })[0];
+      var d = part && (part.inlineData || part.inline_data);
+      if (!d || !d.data) throw mkErr('Gemini không trả về ảnh (có thể bộ lọc an toàn đã chặn cảnh này).', 502);
+      return { mime: d.mimeType || d.mime_type || 'image/png', data: d.data };
+    }, async function () {
+      var j;
+      try { j = await ofetch('/images/generations', { model: state.cfg.oimage, prompt: full, size: '1536x1024', quality: 'medium', n: 1 }, 180000); }
+      catch (e) { if (e.status !== 400) throw e; j = await ofetch('/images/generations', { model: state.cfg.oimage, prompt: full, n: 1 }, 180000); }
+      var d = j && j.data && j.data[0];
+      if (!d || !d.b64_json) throw mkErr('OpenAI không trả về ảnh.', 502);
+      return { mime: 'image/png', data: d.b64_json };
+    }, 'tranh');
     state.imgCache[full] = out;
     return out;
   }
 
+  /* ---- làm tranh cử động (Gemini Omni, ảnh thành video) ---- */
+  function b64Blob(b64, mime) {
+    var bin = atob(b64), u = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return new Blob([u], { type: mime });
+  }
+  function toJpeg169(dataUri) {
+    return new Promise(function (resolve, reject) {
+      var im = new Image();
+      im.onload = function () {
+        try {
+          var W = 1280, H = 720, c = document.createElement('canvas'); c.width = W; c.height = H;
+          var sw = im.naturalWidth, sh = im.naturalHeight, r = 16 / 9, cw = sw, ch = sh;
+          if (sw / sh > r) cw = Math.round(sh * r); else ch = Math.round(sw / r);
+          c.getContext('2d').drawImage(im, Math.round((sw - cw) / 2), Math.round((sh - ch) / 2), cw, ch, 0, 0, W, H);
+          resolve(c.toDataURL('image/jpeg', 0.85));
+        } catch (e) { reject(e); }
+      };
+      im.onerror = function () { reject(mkErr('Không đọc được tranh để làm video.', 0)); };
+      im.src = dataUri;
+    });
+  }
+  function findVideo(o, depth) {
+    if (!o || typeof o !== 'object' || depth > 9) return null;
+    if (o.type === 'video' && (o.data || o.uri)) return o;
+    var ks = Object.keys(o);
+    for (var i = 0; i < ks.length; i++) { var r = findVideo(o[ks[i]], depth + 1); if (r) return r; }
+    return null;
+  }
+  async function makeVideo(sc, imgDataUri) {
+    var jpg = await toJpeg169(imgDataUri);
+    var text = 'Animate this children\'s picture book illustration gently and smoothly. ' + (sc.motion_prompt ? 'Motion: ' + sc.motion_prompt + '. ' : '') +
+      'Keep exactly the same art style, characters and colors. Simple cheerful movement, steady camera. No text, no subtitles, no speech, only soft ambient sound.';
+    var j = await gfetch('/interactions', {
+      model: state.cfg.vmodel,
+      input: [{ type: 'image', data: jpg.split(',')[1], mime_type: 'image/jpeg' }, { type: 'text', text: text }],
+      generation_config: { video_config: { task: 'image_to_video' } }
+    }, 600000);
+    var v = findVideo(j, 0);
+    if (!v) throw mkErr('Gemini không trả về video cho cảnh này.', 502);
+    if (!v.data) throw mkErr('Gemini trả video dạng đường dẫn, app chưa hỗ trợ.', 502);
+    return URL.createObjectURL(b64Blob(v.data, String(v.mime_type || 'video/mp4').split(';')[0]));
+  }
+
   /* ---- vẽ giao diện ---- */
+  function tagText() {
+    var L = state.lesson, img = 0, mov = 0;
+    L.scenes.forEach(function (s) { if (s.img) img++; if (s.video) mov++; });
+    var t = (L.topic ? L.topic + ' · ' : '') + 'tranh ' + img + '/' + L.scenes.length;
+    if (state.cfg.usevideo && hasGemini()) t += ' · động ' + mov + '/' + L.scenes.length;
+    return t;
+  }
+  function refreshMeta() {
+    if (!state.lesson || !ui.tag) return;
+    ui.tag.textContent = tagText();
+    ui.dots.forEach(function (d, i) {
+      var s = state.lesson.scenes[i];
+      d.className = 'dot' + (i < state.idx ? ' done' : '') + (s.img ? ' ready' : '') + (s.video ? ' moving' : '');
+    });
+  }
   function renderLesson() {
     var L = state.lesson, root = $('lesson');
     if (!L) { root.hidden = true; $('quiz').hidden = true; return; }
     root.hidden = false; root.textContent = '';
     var sc = L.scenes[state.idx];
     var head = el('div', 'lesson-head'); head.appendChild(el('h2', null, L.title));
-    var ready = L.scenes.filter(function (s) { return s.img; }).length;
-    head.appendChild(el('span', 'tag', (L.topic ? L.topic + ' · ' : '') + 'tranh ' + ready + '/' + L.scenes.length));
+    ui.tag = el('span', 'tag', tagText()); head.appendChild(ui.tag);
     root.appendChild(head);
 
     var stage = el('div', 'stage'); stage.setAttribute('role', 'img'); stage.setAttribute('aria-label', sc.caption);
-    if (sc.img) {
+    if (sc.video) {
+      var v = el('video'); v.src = sc.video; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+      v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('aria-label', sc.caption);
+      stage.appendChild(v);
+      var pp = v.play(); if (pp && pp.catch) pp.catch(function () {});
+    } else if (sc.img) {
       var im = el('img'); im.src = sc.img; im.alt = sc.caption;
       im.style.setProperty('--kb', sc.motion); im.style.setProperty('--dur', dur(sc) + 's');
       stage.appendChild(im);
@@ -287,6 +469,12 @@ details.settings summary .st.ok { color: var(--leaf); }
       stage.appendChild(el('div', 'ph', 'Cô đang vẽ tranh…'));
     }
     root.appendChild(stage);
+    if (sc.img && !sc.video && sc.vstate === 'working') root.appendChild(el('p', 'vnote work', 'Cô đang làm cho tranh cử động, con xem tranh trước nhé…'));
+    else if (sc.vstate === 'failed') {
+      var vn = el('p', 'vnote', 'Chưa làm được tranh cử động (' + (sc.verror || 'lỗi') + '), nên con xem tranh tĩnh nhé. ');
+      var vb = el('button', 'ctl', 'Thử lại'); vb.type = 'button'; vb.onclick = function () { loadVideo(state.idx); };
+      vn.appendChild(vb); root.appendChild(vn);
+    }
     root.appendChild(el('p', 'caption', sc.caption));
     root.appendChild(el('p', 'narration', sc.narration));
 
@@ -294,16 +482,17 @@ details.settings summary .st.ok { color: var(--leaf); }
     var prev = el('button', 'ctl', 'Quay lại'); prev.type = 'button'; prev.disabled = state.idx === 0; prev.onclick = function () { go(state.idx - 1, state.playing); };
     var play = el('button', 'ctl play', state.playing ? 'Dừng' : (state.idx === 0 ? 'Nghe kể' : 'Nghe tiếp')); play.type = 'button'; play.onclick = togglePlay;
     var next = el('button', 'ctl', 'Tiếp'); next.type = 'button'; next.disabled = state.idx >= L.scenes.length - 1; next.onclick = function () { go(state.idx + 1, state.playing); };
-    var dots = el('div', 'dots');
+    var dots = el('div', 'dots'); ui.dots = [];
     L.scenes.forEach(function (s, i) {
-      var d = el('button', 'dot' + (i < state.idx ? ' done' : '') + (s.img ? ' ready' : '')); d.type = 'button';
+      var d = el('button', 'dot'); d.type = 'button';
       d.setAttribute('aria-label', 'Cảnh ' + (i + 1));
       if (i === state.idx) d.setAttribute('aria-current', 'true');
       d.onclick = function () { go(i, state.playing); };
-      dots.appendChild(d);
+      dots.appendChild(d); ui.dots.push(d);
     });
     ctl.appendChild(prev); ctl.appendChild(play); ctl.appendChild(next); ctl.appendChild(dots);
     root.appendChild(ctl);
+    refreshMeta();
     renderQuiz();
   }
 
@@ -325,42 +514,106 @@ details.settings summary .st.ok { color: var(--leaf); }
     box.appendChild(opts); box.appendChild(ex);
   }
 
-  /* ---- tải ảnh (2 ảnh cùng lúc) ---- */
+  /* ---- tải tranh rồi làm video, mỗi giai đoạn 2 cảnh cùng lúc ---- */
+  function changed(i) { if (i === state.idx) renderLesson(); else refreshMeta(); }
   async function loadImage(i) {
     var L = state.lesson, run = state.run, sc = L.scenes[i];
     sc.failed = false; if (i === state.idx) renderLesson();
     try {
       var r = await makeImage(sc.image_prompt, L.style_guide);
       if (run !== state.run) return;
-      sc.img = 'data:' + r.mime + ';base64,' + r.data;
+      sc.img = 'data:' + r.mime + ';base64,' + r.data; sc.imgInfo = r;
       var pre = new Image(); pre.src = sc.img;
     } catch (e) {
       if (run !== state.run) return;
       sc.failed = true; sc.error = e.message;
     }
-    if (run === state.run) renderLesson();
+    if (run === state.run) changed(i);
   }
-  function loadAllImages() {
-    var run = state.run, order = state.lesson.scenes.map(function (_, i) { return i; }), active = 0;
-    function pump() {
-      while (active < 2 && order.length && run === state.run) {
-        var i = order.shift(); active++;
-        loadImage(i).then(function () { active--; pump(); });
-      }
+  async function loadVideo(i) {
+    var L = state.lesson, run = state.run, sc = L.scenes[i];
+    if (!sc.img || sc.video) return;
+    sc.vstate = 'working'; sc.verror = ''; changed(i);
+    try {
+      var url = await makeVideo(sc, sc.img);
+      if (run !== state.run) { URL.revokeObjectURL(url); return; }
+      sc.video = url; sc.vstate = 'ready';
+    } catch (e) {
+      if (run !== state.run) return;
+      sc.vstate = 'failed'; sc.verror = e.message;
     }
-    pump();
+    if (run === state.run) changed(i);
+  }
+  async function pool(list, limit, worker, run) {
+    var next = 0;
+    async function lane() { while (next < list.length && run === state.run) { var k = list[next++]; await worker(k); } }
+    var lanes = []; for (var n = 0; n < limit; n++) lanes.push(lane());
+    await Promise.all(lanes);
+  }
+  async function produce() {
+    var run = state.run, idxs = state.lesson.scenes.map(function (_, i) { return i; });
+    await pool(idxs, 2, loadImage, run);
+    if (run !== state.run || !state.cfg.usevideo || !hasGemini()) return;
+    await pool(idxs.filter(function (i) { return state.lesson.scenes[i].img; }), 2, loadVideo, run);
   }
 
   /* ---- giọng kể ---- */
   function clearTimers() { state.timers.forEach(clearTimeout); state.timers = []; }
-  function stopSpeech() { state.token++; clearTimers(); try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
+  function stopSpeech() { state.token++; clearTimers(); try { audioEl.onended = null; audioEl.onerror = null; audioEl.pause(); } catch (e) {} try { window.speechSynthesis && speechSynthesis.cancel(); } catch (e) {} }
   function pickVoice() {
     try { state.voice = (speechSynthesis.getVoices() || []).filter(function (v) { return /^vi/i.test(v.lang); })[0] || null; } catch (e) { state.voice = null; }
-    $('voicenote').textContent = state.voice || !window.speechSynthesis ? '' : 'Máy này chưa có giọng đọc tiếng Việt, nên tranh sẽ tự chuyển cảnh và bé đọc chữ trên màn hình nhé.';
+    $('voicenote').textContent = state.voice ? '' : 'Máy này chưa có giọng đọc tiếng Việt, nên cô sẽ dùng giọng của Gemini (hoặc OpenAI nếu Gemini hết hạn mức) để kể. Mỗi cảnh tốn thêm một lượt gọi.';
+  }
+  function sceneText(sc) { return sc.caption + '. ' + sc.narration; }
+  function pcmToWav(b64, rate) {
+    var bin = atob(b64), n = bin.length, buf = new ArrayBuffer(44 + n), v = new DataView(buf), u = new Uint8Array(buf), i;
+    function w(o, s) { for (var k = 0; k < s.length; k++) v.setUint8(o + k, s.charCodeAt(k)); }
+    w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE'); w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true);
+    v.setUint16(22, 1, true); v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+    w(36, 'data'); v.setUint32(40, n, true);
+    for (i = 0; i < n; i++) u[44 + i] = bin.charCodeAt(i);
+    return new Blob([buf], { type: 'audio/wav' });
+  }
+  async function makeSpeech(text) {
+    var ck = state.cfg.smodel + '|' + state.cfg.voice + '|' + text;
+    if (state.audioCache[ck]) return state.audioCache[ck];
+    var url = await gThenO(async function () {
+      var contents = [{ parts: [{ text: text }] }], j;
+      try { j = await gemini(state.cfg.smodel, { contents: contents, generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: state.cfg.voice } } } } }); }
+      catch (e) { if (e.status !== 400) throw e; j = await gemini(state.cfg.smodel, { contents: contents, generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { voice: state.cfg.voice } } } }); }
+      var part = partsOf(j).filter(function (p) { return p.inlineData || p.inline_data; })[0];
+      var d = part && (part.inlineData || part.inline_data);
+      if (!d || !d.data) throw mkErr('Gemini không trả về giọng đọc.', 502);
+      var mime = d.mimeType || d.mime_type || 'audio/L16;rate=24000';
+      var blob = /wav|mpeg|mp3|ogg|webm|mp4/i.test(mime) ? b64Blob(d.data, mime.split(';')[0]) : pcmToWav(d.data, Number((mime.match(/rate=(\d+)/) || [])[1]) || 24000);
+      return URL.createObjectURL(blob);
+    }, async function () {
+      var blob = await ofetch('/audio/speech', { model: state.cfg.otts, voice: state.cfg.ovoice, input: text, response_format: 'mp3', instructions: 'Đọc bằng tiếng Việt, giọng cô giáo ấm áp, vui vẻ, chậm rãi, rõ ràng cho trẻ em nghe.' }, 120000, true);
+      return URL.createObjectURL(blob);
+    }, 'giọng kể');
+    state.audioCache[ck] = url;
+    return url;
+  }
+  function speakRemote(text, my, est, finish) {
+    var L = state.lesson;
+    makeSpeech(text).then(function (url) {
+      if (my !== state.token || !state.playing) return;
+      audioEl.onended = finish; audioEl.onerror = finish;
+      audioEl.src = url;
+      var p = audioEl.play();
+      if (p && p.catch) p.catch(function () { if (my === state.token) { setStatus('Trình duyệt chặn phát tiếng. Bấm "Nghe kể" lần nữa nhé.', true); state.timers.push(setTimeout(finish, est)); } });
+      state.timers.push(setTimeout(finish, est * 2.5 + 3000));
+      var nx = L.scenes[state.idx + 1];
+      if (nx) makeSpeech(sceneText(nx)).catch(function () {});
+    }).catch(function (e) {
+      if (my !== state.token) return;
+      setStatus((e && e.message) || 'Cô chưa đọc được cảnh này.', true);
+      state.timers.push(setTimeout(finish, est));
+    });
   }
   function speakScene() {
     var sc = state.lesson.scenes[state.idx], my = ++state.token, done = false;
-    var text = sc.caption + '. ' + sc.narration, est = Math.max(dur(sc) * 1000, 4000);
+    var text = sceneText(sc), est = Math.max(dur(sc) * 1000, 4000);
     function finish() {
       if (done || my !== state.token || !state.playing) return;
       done = true; clearTimers();
@@ -371,6 +624,7 @@ details.settings summary .st.ok { color: var(--leaf); }
       }, 700));
     }
     var canSpeak = false;
+    if (!state.voice && hasAnyKey()) { speakRemote(text, my, est, finish); return; }
     try {
       if (window.speechSynthesis && state.voice) {
         speechSynthesis.cancel();
@@ -383,7 +637,7 @@ details.settings summary .st.ok { color: var(--leaf); }
   }
   function togglePlay() {
     if (state.playing) { state.playing = false; stopSpeech(); renderLesson(); return; }
-    state.playing = true; renderLesson(); speakScene();
+    unlockAudio(); state.playing = true; renderLesson(); speakScene();
   }
   function go(i, keep) {
     if (i < 0 || i >= state.lesson.scenes.length) return;
@@ -392,17 +646,20 @@ details.settings summary .st.ok { color: var(--leaf); }
 
   /* ---- hỏi ---- */
   async function ask(q) {
-    if (!state.cfg.key) { $('settings').open = true; setStatus('Con cần nhập khóa Gemini API trong phần Cài đặt trước nhé.', true); return; }
-    var btn = $('go'); btn.disabled = true; stopSpeech(); state.playing = false; state.run++; state.lesson = null; renderLesson();
+    if (!hasAnyKey()) { $('settings').open = true; setStatus('Con cần nhập khóa Gemini hoặc OpenAI trong phần Cài đặt trước nhé.', true); return; }
+    var btn = $('go'); btn.disabled = true; stopSpeech(); state.playing = false; state.run++;
+    if (state.lesson) state.lesson.scenes.forEach(function (s) { if (s.video) { try { URL.revokeObjectURL(s.video); } catch (e) {} } });
+    state.lesson = null; renderLesson();
     var root = $('lesson'); root.hidden = false; root.textContent = '';
-    root.appendChild(el('div', 'loading', 'Cô đang nghĩ kịch bản cho con…')); setStatus('');
+    root.appendChild(el('div', 'loading', 'Cô đang nghĩ kịch bản cho con…')); setStatus(''); noteProvider('');
     try {
       var L = await makeLesson(q);
       if (L.refuse) { root.hidden = true; setStatus(L.refuse); return; }
-      L.scenes.forEach(function (s) { s.img = null; s.failed = false; });
+      L.scenes.forEach(function (s) { s.img = null; s.failed = false; s.video = null; s.vstate = ''; s.verror = ''; });
       state.lesson = L; state.idx = 0; renderLesson();
       root.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      loadAllImages();
+      produce();
+      if (!state.voice && hasAnyKey()) makeSpeech(sceneText(L.scenes[0])).catch(function () {});
     } catch (e) {
       root.hidden = true; setStatus(e.message || 'Cô chưa kể được câu này, con thử lại nhé.', true);
     } finally { btn.disabled = false; }
@@ -419,7 +676,7 @@ details.settings summary .st.ok { color: var(--leaf); }
     if (q.length >= 3) ask(q); else setStatus('Con gõ câu hỏi trước nhé.', true);
   });
   loadCfg();
-  try { if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } } catch (e) {}
+  try { if (window.speechSynthesis) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } else pickVoice(); } catch (e) {}
 })();
 </script>
 </body>
